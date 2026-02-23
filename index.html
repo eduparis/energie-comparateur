@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparer l'électricité en France | ComparéNergie</title>
+<meta name="description" content="Comparez les offres d'électricité en France et trouvez le tarif le moins cher selon votre profil.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1f2d45;
+    --accent: #00e5a0;
+    --accent2: #0066ff;
+    --text: #e8edf5;
+    --muted: #8694a8;
+    --danger: #ff4d6d;
+    --warning: #ffb830;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG decoration */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%;
+    right: -20%;
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(circle, rgba(0,229,160,0.06) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(10,15,30,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--text); }
+
+  .nav-cta {
+    background: var(--accent);
+    color: #0a0f1e;
+    padding: 0.5rem 1.25rem;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 5rem 1.5rem 3rem;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(0,229,160,0.1);
+    border: 1px solid rgba(0,229,160,0.25);
+    color: var(--accent);
+    padding: 0.3rem 0.9rem;
+    border-radius: 99px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 1rem;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.6;
+  }
+
+  /* STATS */
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+
+  /* SIMULATOR CARD */
+  .sim-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 1rem 4rem;
+  }
+
+  .sim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.4s ease;
+    border-radius: 99px;
+  }
+
+  .sim-header {
+    padding: 1.5rem 2rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sim-step-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  .sim-step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .sim-body { padding: 2rem; }
+
+  .sim-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .sim-desc { font-size: 0.88rem; color: var(--muted); margin-bottom: 1.75rem; }
+
+  /* Choice grid */
+  .choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .choice-btn {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 0.9rem;
+    padding: 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .choice-btn:hover { border-color: var(--accent); background: rgba(0,229,160,0.06); }
+  .choice-btn.selected { border-color: var(--accent); background: rgba(0,229,160,0.1); }
+  .choice-icon { font-size: 1.6rem; }
+  .choice-label {
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--text);
+  }
+  .choice-sub { font-size: 0.75rem; color: var(--muted); }
+
+  /* Input fields */
+  .field { margin-bottom: 1.25rem; }
+  .field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 0.7rem;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .field-hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+  /* Tarif toggle */
+  .tarif-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .tarif-opt {
+    border: 1.5px solid var(--border);
+    border-radius: 0.7rem;
+    padding: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+  }
+  .tarif-opt:hover { border-color: var(--accent); }
+  .tarif-opt.selected { border-color: var(--accent); background: rgba(0,229,160,0.08); }
+  .tarif-opt-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.2rem; }
+  .tarif-opt-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
+
+  /* Slider */
+  .slider-wrap { margin-bottom: 1.25rem; }
+  .slider-value {
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .slider-value span { font-size: 1rem; color: var(--muted); }
+  input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(0,229,160,0.2);
+  }
+
+  /* Buttons */
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0f1e;
+    border: none;
+    border-radius: 0.9rem;
+    padding: 0.9rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    border-radius: 0.9rem;
+    padding: 0.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.75rem;
+    width: 100%;
+  }
+  .btn-secondary:hover { border-color: var(--text); color: var(--text); }
+
+  /* RESULTS */
+  .results-header { margin-bottom: 1.5rem; }
+  .results-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.3rem;
+  }
+  .results-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .results-title em { color: var(--accent); font-style: normal; }
+
+  .offer-card {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .offer-card:hover { border-color: rgba(0,229,160,0.4); }
+  .offer-card.best {
+    border-color: var(--accent);
+    background: rgba(0,229,160,0.06);
+  }
+  .best-badge {
+    position: absolute;
+    top: -10px;
+    left: 1rem;
+    background: var(--accent);
+    color: #0a0f1e;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.7rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .offer-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .offer-name {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.15rem;
+  }
+  .offer-type {
+    font-size: 0.73rem;
+    color: var(--muted);
+    background: var(--surface);
+    padding: 0.15rem 0.5rem;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+  }
+  .offer-price {
+    text-align: right;
+  }
+  .offer-annual {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .offer-annual-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; }
+
+  .offer-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .offer-detail {
+    background: var(--surface);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.6rem;
+  }
+  .offer-detail-label { font-size: 0.68rem; color: var(--muted); margin-bottom: 0.15rem; }
+  .offer-detail-val { font-size: 0.88rem; font-weight: 600; }
+
+  .offer-cta-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .btn-subscribe {
+    flex: 1;
+    background: var(--accent);
+    color: #0a0f1e;
+    border: none;
+    border-radius: 0.6rem;
+    padding: 0.65rem 1rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    min-width: 120px;
+  }
+  .btn-subscribe:hover { opacity: 0.85; }
+  .btn-contact {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    border-radius: 0.6rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-contact:hover { border-color: var(--accent); color: var(--accent); }
+
+  .disclaimer {
+    margin-top: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255,184,48,0.06);
+    border: 1px solid rgba(255,184,48,0.2);
+    border-radius: 0.6rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .disclaimer strong { color: var(--warning); }
+
+  /* Loading */
+  .loading-state {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--muted); font-size: 0.9rem; }
+
+  /* Hidden */
+  .step { display: none; }
+  .step.active { display: block; }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.8;
+  }
+  footer a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .choice-grid { grid-template-columns: 1fr; }
+    .field-row { grid-template-columns: 1fr; }
+    .offer-details { grid-template-columns: 1fr 1fr; }
+    nav { padding: 0.9rem 1rem; }
+    .sim-body { padding: 1.25rem; }
+    h1 { letter-spacing: -0.5px; }
+    .stats { gap: 1.5rem; }
+  }
+
+  /* Animate in */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .sim-card { animation: fadeUp 0.5s ease both; }
+  .hero { animation: fadeUp 0.4s ease both; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Comparé<span>Nergie</span></div>
+  <a href="#simulateur" class="nav-cta">Comparer maintenant</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">⚡ Mis à jour quotidiennement</div>
+  <h1>Trouvez l'offre<br>d'électricité <em>la moins chère</em></h1>
+  <p class="hero-sub">Comparaison gratuite, indépendante et transparente. Estimation personnalisée en moins de 2 minutes.</p>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">12+</div>
+      <div class="stat-label">Fournisseurs comparés</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">~450€</div>
+      <div class="stat-label">Économies moyennes/an</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Gratuit &amp; sans engagement</div>
+    </div>
+  </div>
+</section>
+
+<div class="sim-wrap" id="simulateur">
+  <div class="sim-card">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 25%"></div>
+    </div>
+    <div class="sim-header">
+      <span class="sim-step-label" id="stepLabel">Étape 1 sur 4</span>
+      <span class="sim-step-num" id="stepNum">Profil</span>
+    </div>
+    <div class="sim-body">
+
+      <!-- STEP 1: Profil logement -->
+      <div class="step active" id="step1">
+        <div class="sim-title">Votre logement</div>
+        <div class="sim-desc">Pour personnaliser votre estimation.</div>
+        <div class="choice-grid">
+          <button class="choice-btn" onclick="selectChoice(this, 'logement', 'appartement')">
+            <span class="choice-icon">🏢</span>
+            <span class="choice-label">Appartement</span>
+            <span class="choice-sub">Studio, T2, T3…</span>
+          </button>
+          <button class="choice-btn" onclick="selectChoice(this, 'logement', 'maison')">
+            <span class="choice-icon">🏡</span>
+            <span class="choice-label">Maison</span>
+            <span class="choice-sub">Individuelle, mitoyenne…</span>
+          </button>
+        </div>
+        <div class="field">
+          <label>Code postal</label>
+          <input type="text" id="codePostal" placeholder="75001" maxlength="5" oninput="this.value=this.value.replace(/\D/g,'')">
+        </div>
+        <div class="field">
+          <label>Puissance du compteur</label>
+          <select id="puissance">
+            <option value="">— Choisir —</option>
+            <option value="3">3 kVA (studio, petite surface)</option>
+            <option value="6">6 kVA (appartement standard)</option>
+            <option value="9">9 kVA (grand appart / petite maison)</option>
+            <option value="12">12 kVA (grande maison)</option>
+          </select>
+          <div class="field-hint">💡 Retrouvez-la sur votre facture ou contrat actuel.</div>
+        </div>
+        <button class="btn-primary" onclick="nextStep(1)">Continuer →</button>
+      </div>
+
+      <!-- STEP 2: Consommation -->
+      <div class="step" id="step2">
+        <div class="sim-title">Votre consommation</div>
+        <div class="sim-desc">Ajustez selon votre facture ou utilisez notre estimation.</div>
+        <div class="slider-wrap">
+          <div class="slider-value" id="consoDisplay">3 500 <span>kWh/an</span></div>
+          <input type="range" min="500" max="20000" step="250" value="3500" id="consoSlider" oninput="updateConso(this.value)">
+          <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--muted); margin-top:0.4rem;">
+            <span>500 kWh</span><span>20 000 kWh</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Option tarifaire</label>
+          <div class="tarif-toggle">
+            <div class="tarif-opt selected" id="tarif-base" onclick="selectTarif('base')">
+              <div class="tarif-opt-title">Tarif Base</div>
+              <div class="tarif-opt-desc">Un seul prix toute la journée. Simple.</div>
+            </div>
+            <div class="tarif-opt" id="tarif-hphc" onclick="selectTarif('hphc')">
+              <div class="tarif-opt-title">HP / HC</div>
+              <div class="tarif-opt-desc">Prix réduit la nuit. Idéal si vous chargez la nuit.</div>
+            </div>
+          </div>
+        </div>
+        <div id="hphcFields" style="display:none;">
+          <div class="field-row">
+            <div class="field">
+              <label>% Heures Creuses</label>
+              <select id="hcPct">
+                <option value="30">30 %</option>
+                <option value="40" selected>40 %</option>
+                <option value="50">50 %</option>
+                <option value="60">60 %</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Plage HC habituelle</label>
+              <select id="hcPlage">
+                <option value="nuit">Nuit (22h–6h)</option>
+                <option value="mixte">Mixte</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="nextStep(2)">Voir les offres →</button>
+        <button class="btn-secondary" onclick="prevStep(2)">← Retour</button>
+      </div>
+
+      <!-- STEP 3: Loading -->
+      <div class="step" id="step3">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <div class="loading-text">Comparaison en cours…<br>Analyse de <strong style="color:var(--text)">12 fournisseurs</strong></div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Results -->
+      <div class="step" id="step4">
+        <div class="results-header">
+          <div class="results-label">Résultats personnalisés</div>
+          <div class="results-title" id="resultTitle">Meilleures offres pour <em>votre profil</em></div>
+        </div>
+        <div id="offersList"></div>
+        <div class="disclaimer">
+          <strong>ℹ️ Estimation indicative</strong> — Calculs basés sur vos données de consommation et les tarifs fournisseurs publics. Mise à jour : <span id="updateDate"></span>. Les prix réels peuvent varier selon conditions contractuelles.
+        </div>
+        <button class="btn-secondary" onclick="restartSim()" style="margin-top:1rem;">🔄 Nouvelle simulation</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  ComparéNergie — Comparateur indépendant de prix de l'énergie en France<br>
+  Rémunération via commission fournisseurs (affiliation). <a href="#">Mentions légales</a> · <a href="#">RGPD</a> · <a href="#">Contact</a>
+</footer>
+
+<script>
+// ——— STATE ———
+const state = {
+  logement: null,
+  codePostal: '',
+  puissance: '',
+  conso: 3500,
+  tarif: 'base',
+  hcPct: 40
+};
+
+// ——— OFFRES (données initiales manuelles — seront remplacées par données réelles) ———
+// Structure: nom, abonnement_annuel (€), prix_base (c€/kWh), prix_hp, prix_hc, type, fournisseur
+const OFFRES = [
+  {
+    nom: 'Tarif Réglementé (TRV)',
+    fournisseur: 'EDF',
+    abonnement: { 3: 127, 6: 156, 9: 202, 12: 240 },
+    prix_base: 25.16,
+    prix_hp: 27.36,
+    prix_hc: 20.08,
+    type_prix: 'Réglementé',
+    engagement: 'Sans engagement',
+    lien: 'https://www.edf.fr',
+    note: 'Référence officielle'
+  },
+  {
+    nom: 'Vert Électrique Base',
+    fournisseur: 'Engie',
+    abonnement: { 3: 120, 6: 148, 9: 193, 12: 228 },
+    prix_base: 23.89,
+    prix_hp: 26.10,
+    prix_hc: 18.70,
+    type_prix: 'Fixe 1 an',
+    engagement: '12 mois',
+    lien: 'https://www.engie.fr',
+    note: 'Populaire déménagement'
+  },
+  {
+    nom: 'Prix Fixe 2 ans',
+    fournisseur: 'TotalEnergies',
+    abonnement: { 3: 115, 6: 142, 9: 185, 12: 219 },
+    prix_base: 23.10,
+    prix_hp: 25.50,
+    prix_hc: 18.20,
+    type_prix: 'Fixe 2 ans',
+    engagement: '24 mois',
+    lien: 'https://totalenergies.fr',
+    note: 'Stabilité long terme'
+  },
+  {
+    nom: 'Offre Verte',
+    fournisseur: 'Ekwateur',
+    abonnement: { 3: 118, 6: 145, 9: 189, 12: 224 },
+    prix_base: 22.95,
+    prix_hp: 25.20,
+    prix_hc: 18.00,
+    type_prix: 'Indexé',
+    engagement: 'Sans engagement',
+    lien: 'https://ekwateur.fr',
+    note: '100% renouvelable'
+  },
+  {
+    nom: 'Électricité verte',
+    fournisseur: 'Ilek',
+    abonnement: { 3: 116, 6: 143, 9: 187, 12: 221 },
+    prix_base: 23.20,
+    prix_hp: 25.40,
+    prix_hc: 18.10,
+    type_prix: 'Indexé',
+    engagement: 'Sans engagement',
+    lien: 'https://ilek.fr',
+    note: 'Coopérative locale'
+  }
+];
+
+function computeAnnual(offre, conso, tarif, hcPct, puissance) {
+  const abo = offre.abonnement[puissance] || offre.abonnement[6];
+  let kwh_cost;
+  if (tarif === 'base') {
+    kwh_cost = (conso * offre.prix_base) / 100;
+  } else {
+    const hc = conso * (hcPct / 100);
+    const hp = conso - hc;
+    kwh_cost = (hp * offre.prix_hp + hc * offre.prix_hc) / 100;
+  }
+  return Math.round(abo + kwh_cost);
+}
+
+// ——— NAVIGATION ———
+let currentStep = 1;
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  const labels = ['Profil', 'Consommation', 'Analyse', 'Résultats'];
+  document.getElementById('stepLabel').textContent = `Étape ${Math.min(n,4)} sur 4`;
+  document.getElementById('stepNum').textContent = labels[n - 1];
+  document.getElementById('progressFill').style.width = (n / 4 * 100) + '%';
+  currentStep = n;
+}
+
+function nextStep(from) {
+  if (from === 1) {
+    const cp = document.getElementById('codePostal').value;
+    const pui = document.getElementById('puissance').value;
+    if (!state.logement) { alert('Veuillez choisir le type de logement.'); return; }
+    if (cp.length !== 5) { alert('Entrez un code postal valide.'); return; }
+    if (!pui) { alert('Veuillez choisir la puissance de votre compteur.'); return; }
+    state.codePostal = cp;
+    state.puissance = parseInt(pui);
+    showStep(2);
+  } else if (from === 2) {
+    state.conso = parseInt(document.getElementById('consoSlider').value);
+    state.hcPct = parseInt(document.getElementById('hcPct').value);
+    showStep(3);
+    setTimeout(() => { buildResults(); showStep(4); }, 1800);
+  }
+}
+
+function prevStep(from) {
+  showStep(from - 1);
+}
+
+function selectChoice(btn, field, value) {
+  btn.closest('.choice-grid').querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state[field] = value;
+}
+
+function updateConso(val) {
+  state.conso = parseInt(val);
+  document.getElementById('consoDisplay').innerHTML = parseInt(val).toLocaleString('fr-FR') + ' <span>kWh/an</span>';
+}
+
+function selectTarif(t) {
+  state.tarif = t;
+  document.getElementById('tarif-base').classList.toggle('selected', t === 'base');
+  document.getElementById('tarif-hphc').classList.toggle('selected', t === 'hphc');
+  document.getElementById('hphcFields').style.display = t === 'hphc' ? 'block' : 'none';
+}
+
+function buildResults() {
+  const results = OFFRES.map(o => ({
+    ...o,
+    annual: computeAnnual(o, state.conso, state.tarif, state.hcPct, state.puissance)
+  })).sort((a, b) => a.annual - b.annual);
+
+  document.getElementById('resultTitle').innerHTML =
+    `Top offres · ${state.conso.toLocaleString('fr-FR')} kWh · <em>${state.codePostal}</em>`;
+
+  const container = document.getElementById('offersList');
+  container.innerHTML = '';
+
+  results.slice(0, 3).forEach((o, i) => {
+    const isBest = i === 0;
+    const savings = results[0].annual < results.find(r => r.fournisseur === 'EDF')?.annual
+      ? (results.find(r => r.fournisseur === 'EDF')?.annual - results[0].annual) : 0;
+    const abo = o.abonnement[state.puissance] || o.abonnement[6];
+    const kwh_price = state.tarif === 'base'
+      ? `${o.prix_base} c€/kWh`
+      : `HP: ${o.prix_hp} / HC: ${o.prix_hc} c€`;
+
+    container.innerHTML += `
+      <div class="offer-card${isBest ? ' best' : ''}">
+        ${isBest ? '<div class="best-badge">✦ Meilleure offre</div>' : ''}
+        <div class="offer-top">
+          <div>
+            <div class="offer-name">${o.nom}</div>
+            <span class="offer-type">${o.fournisseur}</span>
+            ${o.note ? `&nbsp;<span class="offer-type" style="color:var(--accent);border-color:rgba(0,229,160,0.3)">${o.note}</span>` : ''}
+          </div>
+          <div class="offer-price">
+            <div class="offer-annual">${o.annual.toLocaleString('fr-FR')} €</div>
+            <div class="offer-annual-label">estimation/an</div>
+          </div>
+        </div>
+        <div class="offer-details">
+          <div class="offer-detail">
+            <div class="offer-detail-label">Abonnement</div>
+            <div class="offer-detail-val">${abo} €/an</div>
+          </div>
+          <div class="offer-detail">
+            <div class="offer-detail-label">Prix kWh</div>
+            <div class="offer-detail-val">${kwh_price}</div>
+          </div>
+          <div class="offer-detail">
+            <div class="offer-detail-label">Engagement</div>
+            <div class="offer-detail-val">${o.engagement}</div>
+          </div>
+        </div>
+        <div class="offer-cta-row">
+          <button class="btn-subscribe" onclick="window.open('${o.lien}','_blank')">Souscrire →</button>
+          <button class="btn-contact" onclick="contactWhatsApp('${o.nom}')">💬 Demander de l'aide</button>
+        </div>
+      </div>`;
+  });
+
+  // Update date
+  document.getElementById('updateDate').textContent = new Date().toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'});
+}
+
+function contactWhatsApp(offreName) {
+  const msg = encodeURIComponent(`Bonjour, je souhaite souscrire à l'offre "${offreName}" et j'ai besoin d'aide. Consommation : ${state.conso} kWh/an, code postal : ${state.codePostal}.`);
+  window.open(`https://wa.me/33767305152?text=${msg}`, '_blank');
+}
+
+function restartSim() {
+  state.logement = null;
+  state.codePostal = '';
+  state.puissance = '';
+  state.conso = 3500;
+  state.tarif = 'base';
+  document.getElementById('codePostal').value = '';
+  document.getElementById('puissance').value = '';
+  document.getElementById('consoSlider').value = 3500;
+  document.getElementById('consoDisplay').innerHTML = '3 500 <span>kWh/an</span>';
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  selectTarif('base');
+  showStep(1);
+}
+</script>
+</body>
+</html>
