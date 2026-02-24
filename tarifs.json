@@ -1,0 +1,96 @@
+{
+  "updated": "2026-02-24",
+  "source": "auto-scrape + fallback manuel",
+  "offres": [
+    {
+      "id": "edf-trv",
+      "nom": "Tarif Réglementé (TRV)",
+      "fournisseur": "EDF",
+      "abonnement": {
+        "3": 127,
+        "6": 156,
+        "9": 202,
+        "12": 240
+      },
+      "prix_base": 25.16,
+      "prix_hp": 27.36,
+      "prix_hc": 20.08,
+      "type_prix": "Réglementé",
+      "engagement": "Sans engagement",
+      "lien": "https://www.edf.fr",
+      "note": "Référence officielle"
+    },
+    {
+      "id": "engie-vert",
+      "nom": "Vert Électrique Base",
+      "fournisseur": "Engie",
+      "abonnement": {
+        "3": 120,
+        "6": 148,
+        "9": 193,
+        "12": 228
+      },
+      "prix_base": 23.89,
+      "prix_hp": 26.1,
+      "prix_hc": 18.7,
+      "type_prix": "Fixe 1 an",
+      "engagement": "12 mois",
+      "lien": "https://www.engie.fr",
+      "note": "Populaire déménagement"
+    },
+    {
+      "id": "total-fixe",
+      "nom": "Prix Fixe 2 ans",
+      "fournisseur": "TotalEnergies",
+      "abonnement": {
+        "3": 115,
+        "6": 142,
+        "9": 185,
+        "12": 219
+      },
+      "prix_base": 23.1,
+      "prix_hp": 25.5,
+      "prix_hc": 18.2,
+      "type_prix": "Fixe 2 ans",
+      "engagement": "24 mois",
+      "lien": "https://totalenergies.fr",
+      "note": "Stabilité long terme"
+    },
+    {
+      "id": "ekwateur-vert",
+      "nom": "Offre Verte",
+      "fournisseur": "Ekwateur",
+      "abonnement": {
+        "3": 118,
+        "6": 145,
+        "9": 189,
+        "12": 224
+      },
+      "prix_base": 22.95,
+      "prix_hp": 25.2,
+      "prix_hc": 18.0,
+      "type_prix": "Indexé",
+      "engagement": "Sans engagement",
+      "lien": "https://ekwateur.fr",
+      "note": "100% renouvelable"
+    },
+    {
+      "id": "ilek-vert",
+      "nom": "Électricité verte",
+      "fournisseur": "Ilek",
+      "abonnement": {
+        "3": 116,
+        "6": 143,
+        "9": 187,
+        "12": 221
+      },
+      "prix_base": 23.2,
+      "prix_hp": 25.4,
+      "prix_hc": 18.1,
+      "type_prix": "Indexé",
+      "engagement": "Sans engagement",
+      "lien": "https://ilek.fr",
+      "note": "Coopérative locale"
+    }
+  ]
+}
